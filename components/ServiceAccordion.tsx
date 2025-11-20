@@ -54,18 +54,15 @@ const serviceData: ServiceItem[] = [
 
 export default function ServiceAccordion() {
   const [openId, setOpenId] = useState<number | null>(null);
-  const { isCodeMode } = useMode(); // Hier könnte ein Fehler auftreten, da wir den Provider in Page.tsx entfernt haben.
-  // Da wir den Toggle entfernt haben, ist isCodeMode immer false (wenn der Context Default undefined ist).
-  // Um sicher zu gehen, definieren wir die Farben hier statisch, falls der Context fehlt.
+  // Sicherer Zugriff auf den Mode Context (Fallback falls undefined)
+  const modeContext = useMode();
+  const isCodeMode = modeContext ? modeContext.isCodeMode : false;
 
-  // Fallback Logik, falls useMode undefined ist (weil wir den Provider in page.tsx entfernt haben könnten)
-  const safeIsCodeMode = isCodeMode || false;
-
-  const primaryColor = safeIsCodeMode ? "#22c55e" : "#002FA7";
-  const primaryColorClass = safeIsCodeMode
+  const primaryColor = isCodeMode ? "#22c55e" : "#002FA7";
+  const primaryColorClass = isCodeMode
     ? "bg-green-600 dark:bg-green-900/50 text-white dark:text-green-200"
     : "bg-ikb text-white";
-  const hoverColorClass = safeIsCodeMode
+  const hoverColorClass = isCodeMode
     ? "hover:bg-green-500/20 dark:hover:bg-green-900/40"
     : "hover:bg-ikb/90";
 
@@ -99,7 +96,6 @@ export default function ServiceAccordion() {
 
             {/* Header / Titelbereich */}
             <div className={`flex justify-between items-start mb-8 z-10`} style={{color: item.core ? "white" : "inherit"}}>
-              {/* HIER WAR DER FEHLER: className wurde zusammengeführt */}
               <div className={`font-mono text-xs border inline-block px-3 py-1 self-start transition-colors ${item.core ? "text-white border-white dark:border-green-400" : "border-black dark:border-green-500 bg-white dark:bg-slate-900 dark:text-green-400"}`}>
                   {item.subtitle}
               </div>
@@ -177,15 +173,3 @@ export default function ServiceAccordion() {
     </div>
   );
 }
-```
-
-**Wichtig:**
-Da wir in `app/page.tsx` den `ModeProvider` auskommentiert hatten, kann der Hook `useMode()` in Unterkomponenten Fehler werfen, wenn er keinen Context findet. Ich habe deshalb in dieser Datei eine **Sicherheitsabfrage** (`safeIsCodeMode`) eingebaut, damit die Komponente auch ohne Provider nicht abstürzt (sie nimmt dann einfach den Standard-Modus).
-
-1.  Ersetze den Code in `components/ServiceAccordion.tsx`.
-2.  Push es hoch:
-
-```bash
-git add .
-git commit -m "Fix double className attribute in ServiceAccordion"
-git push
