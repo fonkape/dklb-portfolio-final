@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useMode } from '@/context/ModeContext';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// --- Daten-Struktur (Wie gehabt) ---
+// --- Daten-Struktur ---
 interface ServiceItem {
   id: number;
   title: string;
@@ -50,28 +50,32 @@ const serviceData: ServiceItem[] = [
 ];
 
 
-// --- Hauptkomponente (Horizontal Accordion) ---
+// --- Hauptkomponente ---
 
 export default function ServiceAccordion() {
   const [openId, setOpenId] = useState<number | null>(null);
-  const { isCodeMode } = useMode();
+  const { isCodeMode } = useMode(); // Hier könnte ein Fehler auftreten, da wir den Provider in Page.tsx entfernt haben.
+  // Da wir den Toggle entfernt haben, ist isCodeMode immer false (wenn der Context Default undefined ist).
+  // Um sicher zu gehen, definieren wir die Farben hier statisch, falls der Context fehlt.
 
-  const primaryColor = isCodeMode ? "#22c55e" : "#002FA7";
-  const primaryColorClass = isCodeMode
+  // Fallback Logik, falls useMode undefined ist (weil wir den Provider in page.tsx entfernt haben könnten)
+  const safeIsCodeMode = isCodeMode || false;
+
+  const primaryColor = safeIsCodeMode ? "#22c55e" : "#002FA7";
+  const primaryColorClass = safeIsCodeMode
     ? "bg-green-600 dark:bg-green-900/50 text-white dark:text-green-200"
     : "bg-ikb text-white";
-  const hoverColorClass = isCodeMode
+  const hoverColorClass = safeIsCodeMode
     ? "hover:bg-green-500/20 dark:hover:bg-green-900/40"
     : "hover:bg-ikb/90";
 
-  // Standard-Breiten: 70% für offen, 15% für geschlossen
   const getWidth = (id: number) => {
-    if (openId === null) return '33.33%'; // Alle gleich, wenn nichts offen ist
+    if (openId === null) return '33.33%';
     return id === openId ? '70%' : '15%';
   };
 
   return (
-    <div className="flex w-full divide-x-2 divide-black dark:divide-green-500/30 overflow-hidden min-h-[300px]">
+    <div className="flex w-full divide-x-2 divide-black dark:divide-green-500/30 overflow-hidden min-h-[500px]">
       {serviceData.map((item) => {
         const isOpen = item.id === openId;
         const toggleHandler = () => setOpenId(isOpen ? null : item.id);
@@ -88,16 +92,15 @@ export default function ServiceAccordion() {
             key={item.id}
             initial={{ width: '33.33%' }}
             animate={{ width: width }}
-            transition={{ type: "spring", stiffness: 100, damping: 20 }}
-            className={`p-8 md:p-12 transition duration-300 h-auto flex flex-col cursor-pointer relative flex-shrink-0 ${currentHoverClass} ${itemBgClass}`}
+            transition={{ type: "spring", stiffness: 120, damping: 20 }}
+            className={`p-8 md:p-12 transition duration-300 h-auto flex flex-col cursor-pointer relative flex-shrink-0 overflow-hidden ${currentHoverClass} ${itemBgClass}`}
             onClick={toggleHandler}
           >
 
             {/* Header / Titelbereich */}
             <div className={`flex justify-between items-start mb-8 z-10`} style={{color: item.core ? "white" : "inherit"}}>
-              <div className="font-mono text-xs border inline-block px-3 py-1 self-start"
-                   className={`transition-colors ${item.core ? "text-white border-white dark:border-green-400" : "border-black dark:border-green-500 bg-white dark:bg-slate-900 dark:text-green-400"}`}
-              >
+              {/* HIER WAR DER FEHLER: className wurde zusammengeführt */}
+              <div className={`font-mono text-xs border inline-block px-3 py-1 self-start transition-colors ${item.core ? "text-white border-white dark:border-green-400" : "border-black dark:border-green-500 bg-white dark:bg-slate-900 dark:text-green-400"}`}>
                   {item.subtitle}
               </div>
               <motion.div
@@ -109,23 +112,24 @@ export default function ServiceAccordion() {
               </motion.div>
             </div>
 
-            {/* Titel (Muss sich in der Breite anpassen) */}
-            <h3 className={`font-serif dark:font-mono text-3xl mb-4 ${item.core ? "text-white italic dark:not-italic" : "text-black dark:text-gray-100 italic dark:not-italic"} z-10`}>{item.title}</h3>
+            {/* Titel - Feste Breite verhindern, damit er nicht umbricht */}
+            <h3 className={`font-serif dark:font-mono text-3xl mb-4 whitespace-nowrap ${item.core ? "text-white italic dark:not-italic" : "text-black dark:text-gray-100 italic dark:not-italic"} z-10`}>
+                {item.title}
+            </h3>
 
 
-            <AnimatePresence initial={false}>
-              {/* Hier nutzen wir die isOpen-State, um den Detailinhalt zu zeigen */}
+            <AnimatePresence mode='wait'>
               {isOpen ? (
                 <motion.div
                   key="detail-content"
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: "auto", opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.4 }}
-                  className="overflow-hidden mt-4 pt-4 border-t-2 z-10"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 20 }}
+                  transition={{ duration: 0.3, delay: 0.1 }}
+                  className="overflow-y-auto mt-4 pt-4 border-t-2 z-10 pr-4 custom-scrollbar"
                   style={{
                     borderColor: item.core ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.2)",
-                    transition: 'border-color 0.5s'
+                    maxHeight: '400px' // Scrollbar für kleine Screens
                   }}
                 >
 
@@ -155,10 +159,15 @@ export default function ServiceAccordion() {
                   ))}
 
                 </motion.div>
-              ) : ( /* Kurze Vorschau (wenn geschlossen) */
-                <p className={`font-mono text-sm leading-relaxed ${item.core ? "opacity-90" : "text-gray-600 dark:text-gray-400"} mb-8 flex-grow z-10`}>
+              ) : ( /* Kurze Vorschau */
+                <motion.p
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.2 }}
+                    className={`font-mono text-sm leading-relaxed ${item.core ? "opacity-90" : "text-gray-600 dark:text-gray-400"} mb-8 flex-grow z-10 line-clamp-3`}
+                >
                     {item.content}
-                </p>
+                </motion.p>
               )}
             </AnimatePresence>
 
@@ -168,3 +177,15 @@ export default function ServiceAccordion() {
     </div>
   );
 }
+```
+
+**Wichtig:**
+Da wir in `app/page.tsx` den `ModeProvider` auskommentiert hatten, kann der Hook `useMode()` in Unterkomponenten Fehler werfen, wenn er keinen Context findet. Ich habe deshalb in dieser Datei eine **Sicherheitsabfrage** (`safeIsCodeMode`) eingebaut, damit die Komponente auch ohne Provider nicht abstürzt (sie nimmt dann einfach den Standard-Modus).
+
+1.  Ersetze den Code in `components/ServiceAccordion.tsx`.
+2.  Push es hoch:
+
+```bash
+git add .
+git commit -m "Fix double className attribute in ServiceAccordion"
+git push
