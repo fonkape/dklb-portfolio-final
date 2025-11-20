@@ -13,7 +13,6 @@ import { motion } from "framer-motion";
 const useMode = () => ({ isCodeMode: false });
 
 // Definition der Silo Traps inkl. Zitate
-// ANGEPASSTE POSITIONEN: Näher am Text, damit sie nicht rausfliegen
 const siloTraps = [
   { id: 1, text: "01. Legal blockiert.", quote: "ZU RISIKANT", left: '4rem' },
   { id: 2, text: "02. Code ohne Compliance.", quote: "ABMAHNUNG GARANTIERT", left: '6rem' },
@@ -25,23 +24,19 @@ const SiloTrapItem = ({ text, quote, left }: { text: string; quote: string; left
     const [isHovered, setIsHovered] = useState(false);
     const { isCodeMode } = useMode();
 
-    const quoteColor = isCodeMode ? "text-green-500/40" : "text-ikb/40"; // Etwas transparenter (/40) für besseren Layering-Effekt
+    const quoteColor = isCodeMode ? "text-green-500/40" : "text-ikb/40";
     const primaryColor = isCodeMode ? "text-green-400" : "text-ikb";
 
     return (
         <motion.li
-            className="flex flex-col items-start relative cursor-default py-2" // Etwas vertikales Padding
+            className="flex flex-col items-start relative cursor-default py-2"
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
         >
-            {/* Hauptstatement */}
             <span className={`${primaryColor} font-mono text-xl mr-4 z-10 transition-colors relative`}>{text}</span>
-
-            {/* Zitat: Animation von unten */}
             <motion.span
-                // SCHRIFTGRÖSSE REDUZIERT: von text-5xl auf text-3xl md:text-4xl
                 className={`font-serif italic text-3xl md:text-4xl absolute z-0 whitespace-nowrap tracking-wide pointer-events-none ${quoteColor}`}
-                style={{ left: left, top: '-5px' }} // Leicht nach oben korrigiert für bessere Überlappung
+                style={{ left: left, top: '-5px' }}
                 initial={{ y: 20, opacity: 0 }}
                 animate={{
                     y: isHovered ? 0 : 20,
@@ -144,7 +139,6 @@ export default function Home() {
       {/* 3. THE CHALLENGE (SILO TRAPS) */}
       <section id="challenge" className="border-b-2 border-black dark:border-green-500/30 transition-colors duration-500">
         <div className="grid md:grid-cols-2">
-          {/* LINKE SPALTE: TRAPS (Mit overflow-hidden FIX) */}
           <div className="p-12 md:p-24 border-r-2 border-black dark:border-green-500/30 flex flex-col justify-center bg-white dark:bg-slate-900 transition-colors overflow-hidden">
             <h2 className="text-5xl md:text-6xl font-serif dark:font-mono italic dark:not-italic mb-8 leading-tight">
               The Silo Trap.
@@ -166,7 +160,6 @@ export default function Home() {
             </ul>
           </div>
 
-          {/* RECHTE SPALTE: KONSEQUENZEN */}
           <div className="flex flex-col font-mono bg-gray-100 dark:bg-slate-950 transition-colors">
             <div className="p-12 border-b-2 border-black dark:border-green-500/30 flex-1 hover:bg-white dark:hover:bg-slate-900 group cursor-default transition-colors flex flex-col justify-center">
               <div className="flex justify-between items-start mb-4">
@@ -201,38 +194,20 @@ export default function Home() {
         </div>
 
         <div className="venn-container scale-75 md:scale-100 dark:opacity-90">
-          {/* ÄUSSERE KREISE (STATISCH, statischer Anker) */}
-          <div className="venn-circle venn-law dark:border-green-500 dark:text-green-400 dark:bg-slate-900/50">
-            LAW
-          </div>
-          <div className="venn-circle venn-tech dark:border-green-500 dark:text-green-400 dark:bg-slate-900/50">
-            TECH
-          </div>
-          <div className="venn-circle venn-biz dark:border-green-500 dark:text-green-400 dark:bg-slate-900/50">
-            BUSINESS
-          </div>
+          {/* ÄUSSERE KREISE (STATISCH) */}
+          <div className="venn-circle venn-law dark:border-green-500 dark:text-green-400 dark:bg-slate-900/50">LAW</div>
+          <div className="venn-circle venn-tech dark:border-green-500 dark:text-green-400 dark:bg-slate-900/50">TECH</div>
+          <div className="venn-circle venn-biz dark:border-green-500 dark:text-green-400 dark:bg-slate-900/50">BUSINESS</div>
 
           {/* ZENTRUM: LOGO (Pulsierend) */}
           <div className="venn-me dark:bg-green-600 dark:shadow-[0_0_30px_rgba(34,197,94,0.4)]">
 
             {/* Pulsierender Hintergrund-Effekt */}
             <motion.div
-                className="absolute inset-0 rounded-full"
+                className={`absolute inset-0 rounded-full ${isCodeMode ? 'bg-green-500/10 shadow-[0_0_10px_rgba(34,197,94,0.4)]' : 'bg-ikb/10 shadow-[0_0_10px_rgba(0,47,167,0.4)]'}`}
                 initial={{ scale: 1 }}
                 animate={{ scale: [1, 1.3, 1] }}
-                transition={{
-                    duration: 3,
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                }}
-                // Transparenter Rand für den "atmenden" Effekt
-                style={{
-                    backgroundColor: 'rgba(0, 47, 167, 0.1)', // Soft IKB Blau
-                    boxShadow: '0 0 10px rgba(0, 47, 167, 0.4)',
-                    opacity: 0.8
-                }}
-                // Dark Mode Anpassung via className überschreibt style im Dark Mode
-                className={`absolute inset-0 rounded-full ${isCodeMode ? 'bg-green-500/10 shadow-[0_0_10px_rgba(34,197,94,0.4)]' : 'bg-ikb/10 shadow-[0_0_10px_rgba(0,47,167,0.4)]'}`}
+                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
             />
 
             {/* Logo SVG (Bleibt statisch und farbig) */}
