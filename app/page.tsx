@@ -242,6 +242,7 @@ export default function Home() {
       </section>
 
       {/* 8. PROFILE */}
+      {/* 8. PROFILE */}
       <section id="profile" className="py-24 px-6 md:px-12 bg-gray-50 dark:bg-slate-800/30 border-b-2 border-black dark:border-green-500/30 transition-colors">
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-12 gap-12 items-center">
@@ -263,16 +264,21 @@ export default function Home() {
                 <span className="bg-ikb dark:bg-slate-700 text-white dark:text-green-400 px-3 py-1">AI Engineer</span>
               </div>
             </div>
+
+            {/* RECHTE SPALTE MIT FOTO */}
             <div className="md:col-span-5 order-1 md:order-2">
               <div className="relative p-2 border-2 border-black dark:border-green-500 bg-white dark:bg-slate-900 shadow-[12px_12px_0_0_#002FA7] dark:shadow-[12px_12px_0_0_#22c55e] transition-all">
-                <div className="w-full aspect-[4/5] bg-gray-200 dark:bg-slate-800 flex items-center justify-center overflow-hidden">
-                  <div className="text-center p-4">
-                    <i className="fas fa-user text-6xl text-gray-400 dark:text-green-500/50 mb-4"></i>
-                    <p className="font-mono text-xs">Hier dein Foto einfügen</p>
-                  </div>
+                <div className="w-full aspect-[4/5] bg-gray-200 dark:bg-slate-800 relative overflow-hidden">
+                  <img
+                    src="/me.jpg"
+                    alt="Daniel Kleiboldt"
+                    className="w-full h-full object-cover filter grayscale dark:grayscale-0 dark:sepia-[.2] transition-all duration-500"
+                  />
+                  <div className="absolute inset-0 bg-green-500/10 opacity-0 dark:opacity-100 pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] mix-blend-overlay transition-opacity duration-500"></div>
                 </div>
               </div>
             </div>
+
           </div>
         </div>
       </section>
