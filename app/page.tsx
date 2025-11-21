@@ -17,7 +17,35 @@ const trapLayouts = [
   { left: '16rem' }
 ];
 
-// KOMPONENTE: Silo Trap Item mit Hover-Animation
+// NEU: Glitch Effekt Komponente
+const GlitchWord = ({ text }: { text: string }) => {
+    const { isCodeMode } = useMode();
+    // Farben für den Glitch: Helleres Blau (Legal) oder Neon-Grün (Code)
+    const glitchColor = isCodeMode ? "text-green-300" : "text-blue-400";
+    const baseColor = isCodeMode ? "text-green-400" : "text-ikb";
+
+    // Hintergrund muss passen, um den unteren Text zu verdecken (Tricky bei Text, wir nutzen Transparenz-Layering)
+    // Wir nutzen clip-path für das obere Drittel
+    return (
+        <span className="relative inline-block">
+            {/* Das Basis-Wort */}
+            <span className={`italic transition-colors ${baseColor} ${isCodeMode ? 'not-italic' : ''}`}>
+                {text}
+            </span>
+
+            {/* Der Glitch-Layer (Oberes Drittel, leicht verschoben) */}
+            <span
+                className={`absolute top-0 left-[2px] h-[45%] w-full overflow-hidden pointer-events-none italic ${glitchColor} ${isCodeMode ? 'not-italic' : ''}`}
+                aria-hidden="true"
+                style={{ clipPath: 'inset(0 0 40% 0)' }} // Schneidet unten ab
+            >
+                {text}
+            </span>
+        </span>
+    );
+};
+
+// Silo Trap Item
 const SiloTrapItem = ({ text, quote, left }: { text: string; quote: string; left: string }) => {
     const [isHovered, setIsHovered] = useState(false);
     const { isCodeMode } = useMode();
@@ -70,12 +98,22 @@ export default function Home() {
             <Reveal>
               {t.hero.titlePart1}
             </Reveal>
+
+            {/* HIER IST DER NEUE GLITCH EFFEKT */}
             <Reveal delay={0.4}>
-              <span className={`italic text-ikb dark:text-green-400 transition-colors ${isCodeMode ? 'not-italic' : ''}`}>AI</span> / <span className={`italic text-ikb dark:text-green-400 transition-colors ${isCodeMode ? 'not-italic' : ''}`}>Blockchain</span> {t.hero.titlePart2}
+               <div className="flex flex-wrap gap-x-4 md:gap-x-6 items-baseline">
+                  <GlitchWord text="AI" />
+                  <span className="opacity-50 italic dark:not-italic">/</span>
+                  <GlitchWord text="Blockchain" />
+                  <span>{t.hero.titlePart2}</span>
+               </div>
             </Reveal>
+
             <div className="mt-4"></div>
+
             <Reveal delay={0.6}>
-              <span className="text-4xl md:text-6xl block opacity-80">
+              {/* FIX: pb-2 und leading-tight verhindern, dass das 'g' abgeschnitten wird */}
+              <span className="text-4xl md:text-6xl block opacity-80 pb-2 leading-tight pt-2">
                  {t.hero.subtitle}
               </span>
             </Reveal>
@@ -194,12 +232,10 @@ export default function Home() {
           <div className="venn-circle venn-biz dark:border-green-500 dark:text-green-400 dark:bg-slate-900/50">BUSINESS</div>
 
           <div className="venn-me dark:bg-green-600 dark:shadow-[0_0_30px_rgba(34,197,94,0.4)]">
-            {/* FIX: Nur EIN ClassName Attribut, keine doppelten Style-Zuweisungen */}
             <motion.div
                 initial={{ scale: 1 }}
                 animate={{ scale: [1, 1.3, 1] }}
                 transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                // Wir nutzen hier Tailwind-Klassen für alles, inkl. Opacity (bg-opacity)
                 className={`absolute inset-0 rounded-full opacity-80 ${isCodeMode ? 'bg-green-500/10 shadow-[0_0_10px_rgba(34,197,94,0.4)]' : 'bg-ikb/10 shadow-[0_0_10px_rgba(0,47,167,0.4)]'}`}
             />
              <svg viewBox="0 0 100 100" className='w-12 h-12 relative z-10'>
