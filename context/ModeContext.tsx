@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 type Language = 'de' | 'en';
 
@@ -16,11 +16,11 @@ const translations = {
       blog: "Insights"
     },
     hero: {
-      role: "/// Legal Engineer & Solutions Architect",
+      role: "/// JURIST, LEGAL ENGINEER & SOLUTIONS ARCHITECT", // Hier angepasst wie besprochen
       titlePart1: "Ihr Unternehmen will",
       titlePart2: "nutzen?",
-      subtitle: "Ich übersetze zwischen Rechtsabteilung, IT und Management.",
-      intro: "Wenn Ihr Unternehmen AI oder Blockchain einsetzen will, prallen Welten aufeinander. Ich löse die 'Lost in Translation'-Probleme. Für Innovation, die rechtssicher ist und Code, der Business-Ziele erfüllt.",
+      subtitle: "Aber Legal, IT und Business sprechen nicht dieselbe Sprache. Ich übersetze.", // Neue Subline
+      intro: "Rechtliche Compliance und technische Präzision sind keine Gegensätze. Sie sind zwei Seiten derselben Architektur. Ich bringe 10 Jahre juristische Expertise direkt in die Entwicklungsumgebung. Ich baue Systeme, die 'Compliant by Design' sind. Keine Workarounds. Keine Übersetzungsfehler.", // Der neue, starke Text
       cta: "Zu den Use Cases"
     },
     opportunity: {
@@ -163,11 +163,11 @@ const translations = {
       blog: "Insights"
     },
     hero: {
-      role: "/// Legal Engineer & Solutions Architect",
+      role: "/// JURIST, LEGAL ENGINEER & SOLUTIONS ARCHITECT",
       titlePart1: "Your company wants to use",
       titlePart2: "?",
-      subtitle: "I translate between Legal, IT, and Management.",
-      intro: "When your company wants to deploy AI or Blockchain, worlds collide. I solve 'Lost in Translation' issues. for innovation that is legally compliant and code that meets business goals.",
+      subtitle: "But Legal, IT, and Business don't speak the same language. I translate.",
+      intro: "Legal compliance and technical precision are not opposites. They are two sides of the same architecture. I bring 10 years of legal expertise directly into the development environment. I build systems that are 'Compliant by Design'. No workarounds. No translation errors.",
       cta: "View Use Cases"
     },
     opportunity: {
