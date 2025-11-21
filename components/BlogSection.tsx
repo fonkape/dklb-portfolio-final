@@ -1,17 +1,13 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useMode } from '@/context/ModeContext';
 
-// Wir simulieren den Context hier sicherheitshalber
-const useSafeMode = () => {
-  return { isCodeMode: false };
-};
-
-// --- DATEN: DEINE ARTIKEL ---
-const blogPosts = [
+// --- DEUTSCHER CONTENT ---
+const blogPostsDE = [
   {
     id: 1,
-    date: "20. November 2025", // <--- DATUM AKTUALISIERT
+    date: "20. November 2025",
     category: "SMART CONTRACTS",
     title: "Smart Contracts sind keine Verträge (und das ist ein Problem)",
     excerpt: "Juristen hassen Smart Contracts. Entwickler verstehen nicht warum. Ich erkläre, warum beide Recht haben – und was die Lösung ist.",
@@ -76,16 +72,87 @@ const blogPosts = [
   }
 ];
 
+// --- ENGLISH CONTENT ---
+const blogPostsEN = [
+  {
+    id: 1,
+    date: "November 20, 2025",
+    category: "SMART CONTRACTS",
+    title: "Smart Contracts Are Not Contracts (And That's a Problem)",
+    excerpt: "Lawyers hate smart contracts. Developers don't understand why. I explain why both are right – and what the solution is.",
+    readTime: "4 Min",
+    content: (
+      <div className="space-y-6 text-lg leading-relaxed">
+        <p className="font-serif italic text-xl border-l-4 border-ikb dark:border-green-500 pl-4 my-8">
+          "A smart contract is not a contract. At least not in the legal sense."
+        </p>
+
+        <p>
+          When a client recently asked me if his developer team could "simply program a smart contract for the supply chain," I had to stop him. Not because the idea was bad. But because it was based on a dangerous misconception.
+        </p>
+        <p>
+          This is exactly where the drama begins, which I have seen in dozens of SMEs in recent months: Developers build brilliant automations. Legal departments block them out of fear. And in the end, the company burns six-figure budgets – for nothing.
+        </p>
+
+        <h3 className="font-serif text-2xl font-bold mt-8 mb-4">What Smart Contracts Really Are</h3>
+        <p>
+          Let's put marketing language aside. A smart contract is code that represents and automatically executes a contract – but it is not the contract itself.
+        </p>
+        <p>
+          <strong>Analogy:</strong> Imagine a vending machine. You insert 2 Euros, press a button, and the soda falls out. The machine executes the sales contract, but it is not the contract.
+        </p>
+        <ul className="list-disc pl-5 space-y-2 font-mono text-sm my-4 bg-gray-100 dark:bg-gray-800 p-4 rounded">
+            <li>The Code: <code>if (payment_received) &#123; release_goods(); &#125;</code></li>
+            <li>The Contract: The legal agreement on price, quality, warranty, liability.</li>
+        </ul>
+
+        <h3 className="font-serif text-2xl font-bold mt-8 mb-4">Why Lawyers Fear Smart Contracts</h3>
+        <p>
+          Recently, I sat in a workshop with the legal department of a manufacturing SME. The IT team had developed a smart contract that automatically releases payments. The lawyers' reaction? Panic.
+        </p>
+        <ul className="list-disc pl-5 space-y-2">
+            <li><strong>Revocation:</strong> A smart contract cannot simply be undone.</li>
+            <li><strong>Defective Goods:</strong> If the sensor reports "delivery," the money flows – even if the goods are scrap.</li>
+            <li><strong>Liability:</strong> Who pays for bugs in the code?</li>
+        </ul>
+
+        <h3 className="font-serif text-2xl font-bold mt-8 mb-4">The Solution: Hybrid Contracts</h3>
+        <p>
+          The good news: You don't have to choose between "Blockchain Innovation" and "legal certainty." The solution is <strong>Hybrid Smart Contracts</strong>.
+        </p>
+
+        <div className="bg-gray-50 dark:bg-slate-800 p-6 border-l-2 border-black dark:border-green-500 my-6">
+            <h4 className="font-bold mb-2">1. Legal Wrapper (The Framework)</h4>
+            <p className="text-sm mb-4">A classic contract governs liability and dispute resolution. It takes "precedence" over the code.</p>
+
+            <h4 className="font-bold mb-2">2. On-Chain Execution (The Engine)</h4>
+            <p className="text-sm">The code automates fulfillment (payment, release) only under clear parameters.</p>
+        </div>
+
+        <h3 className="font-serif text-2xl font-bold mt-8 mb-4">Conclusion: Code AND Law</h3>
+        <p>
+          Smart contracts are no longer science fiction. But the truth is: Neither your lawyers nor your developers are wrong. They just speak different languages. Hybrid Contracts are the translation.
+        </p>
+        <p>
+           Next time your legal department and IT argue, put them at one table – with someone who understands both sides.
+        </p>
+      </div>
+    )
+  }
+];
+
 
 export default function BlogSection() {
   const [selectedPost, setSelectedPost] = useState<number | null>(null);
-  const { isCodeMode } = useSafeMode();
+  const { t, isCodeMode, language } = useMode(); // Zugriff auf Sprache und Wörterbuch
 
-  // Scroll-Lock: Verhindert das Scrollen der Hauptseite
+  // Wähle das richtige Array basierend auf der Sprache
+  const blogPosts = language === 'en' ? blogPostsEN : blogPostsDE;
+
+  // Scroll-Lock
   useEffect(() => {
     if (selectedPost !== null) {
       document.body.style.overflow = 'hidden';
-      // Zusätzlicher Schutz für manche Mobile-Browser
       document.documentElement.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
@@ -107,14 +174,14 @@ export default function BlogSection() {
         <div className="flex flex-col md:flex-row justify-between items-end mb-16 border-b-2 border-black dark:border-green-500/30 pb-8">
            <div>
              <p className="font-mono text-xs uppercase tracking-[0.2em] mb-4 border-l-4 border-ikb dark:border-green-500 pl-4 transition-colors text-ikb dark:text-green-400">
-                /// INSIGHTS
+                {t.blog.subtitle}
              </p>
              <h2 className="font-serif dark:font-mono text-5xl italic dark:not-italic leading-tight text-black dark:text-gray-100">
-                Legal Tech<br/>Logbuch.
+                {t.blog.title}
              </h2>
            </div>
            <p className="font-mono text-sm text-gray-500 dark:text-gray-400 mt-6 md:mt-0 max-w-md text-right">
-              Gedanken an der Schnittstelle. Praxisnah, ohne Juristendeutsch.
+              {t.blog.desc}
            </p>
         </div>
 
@@ -138,32 +205,29 @@ export default function BlogSection() {
                     {post.excerpt}
                 </p>
                 <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-black dark:text-white">
-                    Read Article <i className="fas fa-arrow-right transform group-hover:translate-x-2 transition-transform"></i>
+                    {t.blog.read} <i className="fas fa-arrow-right transform group-hover:translate-x-2 transition-transform"></i>
                 </div>
              </motion.article>
            ))}
 
-           {/* Placeholder Card */}
+           {/* Placeholder */}
            <div className="border-2 border-dashed border-gray-300 dark:border-gray-700 p-8 flex flex-col justify-center items-center text-center opacity-50">
               <p className="font-mono text-xs uppercase mb-2 text-gray-500">Coming Next</p>
-              <h3 className="font-serif dark:font-mono text-xl text-gray-400">MiCA für den Mittelstand</h3>
+              <h3 className="font-serif dark:font-mono text-xl text-gray-400">MiCA {language === 'de' ? 'für den Mittelstand' : 'for SMEs'}</h3>
            </div>
         </div>
 
-        {/* MODAL (ARTICLE VIEW) */}
+        {/* MODAL */}
         <AnimatePresence>
             {selectedPost && activePost && (
                 <>
-                    {/* Backdrop */}
                     <motion.div
                         initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                         onClick={() => setSelectedPost(null)}
                         className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] cursor-pointer"
                     />
 
-                    {/* Content Card */}
                     <motion.div
-                        // WICHTIG: data-lenis-prevent sorgt dafür, dass der Scroll IN der Karte bleibt
                         data-lenis-prevent
                         initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
                         transition={{ type: "spring", damping: 25, stiffness: 200 }}
@@ -179,18 +243,16 @@ export default function BlogSection() {
                         <div className="p-8 md:p-16 max-w-3xl mx-auto">
                             <div className="font-mono text-xs text-ikb dark:text-green-400 mb-4 uppercase tracking-widest flex justify-between">
                                 <span>{activePost.category} • {activePost.readTime} Read</span>
-                                <span>{activePost.date}</span> {/* Datum auch hier anzeigen */}
+                                <span>{activePost.date}</span>
                             </div>
                             <h1 className="font-serif dark:font-mono text-4xl md:text-5xl mb-8 leading-tight text-black dark:text-white">
                                 {activePost.title}
                             </h1>
 
-                            {/* Der eigentliche Text */}
                             <div className="prose dark:prose-invert prose-lg font-serif dark:font-sans text-gray-800 dark:text-gray-300">
                                 {activePost.content}
                             </div>
 
-                            {/* Author Footer im Modal */}
                             <div className="mt-16 pt-8 border-t border-gray-200 dark:border-gray-700 flex items-center gap-4">
                                 <div className="w-12 h-12 bg-gray-200 dark:bg-slate-800 rounded-full overflow-hidden border border-black dark:border-green-500">
                                     <img src="/me.jpg" alt="DK" className="w-full h-full object-cover grayscale" />
@@ -200,9 +262,8 @@ export default function BlogSection() {
                                     <p className="text-xs text-gray-500 uppercase tracking-wide">Legal Engineer</p>
                                 </div>
                                 <div className="ml-auto">
-                                    {/* LINK KORRIGIERT */}
                                     <a href="https://www.linkedin.com/in/daniel-kleiboldt-306a75123/" target="_blank" rel="noopener noreferrer" className="text-ikb dark:text-green-400 hover:underline text-sm font-mono flex items-center gap-2">
-                                        Auf LinkedIn folgen <i className="fas fa-arrow-right"></i>
+                                        {language === 'de' ? 'Auf LinkedIn folgen' : 'Follow on LinkedIn'} <i className="fas fa-arrow-right"></i>
                                     </a>
                                 </div>
                             </div>

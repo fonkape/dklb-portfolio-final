@@ -1,30 +1,33 @@
 'use client';
 import { Reveal } from "@/components/Reveal";
+import { useMode } from "@/context/ModeContext";
 
 export default function TechStack() {
+  const { t } = useMode(); // Zugriff auf das Wörterbuch
+
   return (
     <section id="stack" className="py-24 px-6 md:px-12 bg-white dark:bg-slate-900 border-b-2 border-black dark:border-green-500/30 transition-colors">
       <div className="max-w-7xl mx-auto">
 
-        {/* HEADER */}
+        {/* HEADER - Jetzt dynamisch */}
         <div className="grid md:grid-cols-12 gap-12 mb-20 border-b-2 border-black dark:border-green-500/30 pb-8">
           <div className="md:col-span-5">
             <Reveal>
                 <h2 className="font-serif dark:font-mono text-5xl italic dark:not-italic leading-tight text-black dark:text-gray-100">
-                Tech Stack<br/>& Certs
+                {t.techstack.title}
                 </h2>
             </Reveal>
           </div>
           <div className="md:col-span-7 flex items-end">
             <Reveal delay={0.2}>
                 <p className="font-mono text-lg pl-8 border-l-4 border-ikb dark:border-green-500 max-w-xl text-gray-700 dark:text-gray-300">
-                Nicht nur Theorie. Handfeste technische Qualifikation und tägliche Werkzeuge.
+                {t.techstack.subtitle}
                 </p>
             </Reveal>
           </div>
         </div>
 
-        {/* ZERTIFIKATE GRID */}
+        {/* ZERTIFIKATE GRID (Bleibt hardcoded, da international) */}
         <div className="grid md:grid-cols-3 gap-8 mb-24">
           {[
             { icon: "fa-cube", title: "Blockchain Architect", subtitle: "Certified (2026 Goal)" },
