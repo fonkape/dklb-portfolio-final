@@ -8,6 +8,7 @@ import ServiceAccordion from "@/components/ServiceAccordion";
 import UseCaseGrid from "@/components/UseCaseGrid";
 import TechStack from "@/components/TechStack";
 import BlogSection from "@/components/BlogSection";
+import BlueprintSystem from "@/components/BlueprintSystem"; // <--- WICHTIG: Import
 import { motion } from "framer-motion";
 
 // Layout-Daten für die Silo Traps
@@ -17,46 +18,23 @@ const trapLayouts = [
   { left: '16rem' }
 ];
 
-// GLITCH COMPONENT (V3: Seismic & Tall)
 const GlitchWord = ({ text }: { text: string }) => {
     const { isCodeMode } = useMode();
-
-    // Farben
     const glitchColor = isCodeMode ? "text-green-300" : "text-blue-400";
     const baseColor = isCodeMode ? "text-green-400" : "text-ikb";
     const bgClass = isCodeMode ? "bg-slate-900" : "bg-white";
 
-    // WICHTIG: Font-Style explizit machen, damit Layer deckungsgleich sind
-    const fontStyle = isCodeMode ? "font-mono not-italic" : "font-serif italic";
-
     return (
         <span className="relative inline-block group">
-            {/* Basis-Wort */}
-            <span className={`transition-colors ${baseColor} ${fontStyle}`}>
+            <span className={`italic transition-colors ${baseColor} ${isCodeMode ? 'not-italic' : ''}`}>
                 {text}
             </span>
-
-            {/* Der Glitch-Layer: 85% Höhe, Zitter-Animation */}
             <motion.span
-                className={`absolute top-0 left-0 w-full overflow-hidden pointer-events-none ${glitchColor} ${bgClass} ${fontStyle}`}
+                className={`absolute top-0 left-0 w-full overflow-hidden pointer-events-none ${glitchColor} ${bgClass} ${isCodeMode ? 'font-mono not-italic' : 'font-serif italic'}`}
                 aria-hidden="true"
-                // "Seismic" Animation: Zufälliges kurzes Zittern
-                animate={{
-                    x: [0, -1, 1, -0.5, 0],
-                    y: [0, 0.5, -0.5, 0],
-                    opacity: [1, 0.9, 1]
-                }}
-                transition={{
-                    duration: 0.15,          // Sehr schnelles Zittern (Vibration)
-                    repeat: Infinity,
-                    repeatDelay: 2 + Math.random() * 3, // Zufällige Pause
-                    ease: "linear"
-                }}
-                style={{
-                    height: '85%', // Mehr vertikaler Raum (85%)
-                    clipPath: 'inset(0 0 15% 0)', // Schneidet nur unten 15% ab
-                    transform: 'translateX(2px)' // Grundversatz
-                }}
+                animate={{ x: [0, -1, 1, -0.5, 0], y: [0, 0.5, -0.5, 0], opacity: [1, 0.9, 1] }}
+                transition={{ duration: 0.15, repeat: Infinity, repeatDelay: 2 + Math.random() * 3, ease: "linear" }}
+                style={{ height: '85%', clipPath: 'inset(0 0 15% 0)', transform: 'translateX(2px)' }}
             >
                 {text}
             </motion.span>
@@ -64,11 +42,9 @@ const GlitchWord = ({ text }: { text: string }) => {
     );
 };
 
-// Silo Trap Item
 const SiloTrapItem = ({ text, quote, left }: { text: string; quote: string; left: string }) => {
     const [isHovered, setIsHovered] = useState(false);
     const { isCodeMode } = useMode();
-
     const quoteColor = isCodeMode ? "text-green-500/40" : "text-ikb/40";
     const primaryColor = isCodeMode ? "text-green-400" : "text-ikb";
 
@@ -83,10 +59,7 @@ const SiloTrapItem = ({ text, quote, left }: { text: string; quote: string; left
                 className={`font-serif italic text-2xl absolute z-0 whitespace-nowrap tracking-wide pointer-events-none ${quoteColor}`}
                 style={{ left: left, top: '1.2rem' }}
                 initial={{ y: 15, opacity: 0 }}
-                animate={{
-                    y: isHovered ? 0 : 15,
-                    opacity: isHovered ? 1 : 0
-                }}
+                animate={{ y: isHovered ? 0 : 15, opacity: isHovered ? 1 : 0 }}
                 transition={{ duration: 0.4, ease: "easeOut" }}
             >
                 {quote}
@@ -97,6 +70,9 @@ const SiloTrapItem = ({ text, quote, left }: { text: string; quote: string; left
 
 export default function Home() {
   const { isCodeMode, t } = useMode();
+
+  // NEU: State für das Service-System (verbindet Diagramm und Accordion)
+  const [activeServiceId, setActiveServiceId] = useState<number | null>(null);
 
   return (
     <main className="min-h-screen bg-white dark:bg-slate-900 text-black dark:text-gray-100 selection:bg-ikb dark:selection:bg-green-500 dark:selection:text-black transition-colors duration-500">
@@ -114,11 +90,8 @@ export default function Home() {
           </Reveal>
 
           <h1 className="text-5xl md:text-8xl leading-[0.95] font-serif dark:font-mono mb-12 transition-all duration-500">
-            <Reveal>
-              {t.hero.titlePart1}
-            </Reveal>
+            <Reveal>{t.hero.titlePart1}</Reveal>
 
-            {/* GLITCH EFFEKT */}
             <Reveal delay={0.4}>
                <div className="flex flex-wrap gap-x-4 md:gap-x-6 items-baseline pt-2">
                   <GlitchWord text="AI" />
@@ -131,7 +104,6 @@ export default function Home() {
             <div className="mt-4"></div>
 
             <Reveal delay={0.6}>
-              {/* TYPO FIX: pb-2 und leading-tight */}
               <span className="text-4xl md:text-6xl block opacity-80 pb-2 leading-tight pt-2">
                  {t.hero.subtitle}
               </span>
@@ -274,17 +246,21 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 6. SERVICES */}
+      {/* 6. SERVICES (INKL. BLUEPRINT DIAGRAMM) */}
       <section id="services" className="py-12 md:py-24 bg-white dark:bg-slate-900 transition-colors">
         <div className="max-w-7xl mx-auto px-6 md:px-12 mb-16">
             <p className="font-mono text-xs uppercase tracking-[0.2em] mb-4 border-l-4 border-ikb dark:border-green-500 pl-4">
                 {t.services.supertitle}
             </p>
-            <h2 className="font-serif dark:font-mono text-5xl md:text-6xl italic dark:not-italic leading-tight">
+            <h2 className="font-serif dark:font-mono text-5xl md:text-6xl italic dark:not-italic leading-tight mb-12">
                 {t.services.title}
             </h2>
+
+            {/* HIER IST DAS ANIMIERTE DIAGRAMM */}
+            <BlueprintSystem activeId={activeServiceId} />
+
         </div>
-        <ServiceAccordion />
+        <ServiceAccordion openId={activeServiceId} setOpenId={setActiveServiceId} />
       </section>
 
       {/* 7. PROFILE */}
