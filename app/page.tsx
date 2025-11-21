@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import NavBar from "@/components/NavBar";
-import { useMode } from "@/context/ModeContext"; // <--- ECHTER IMPORT FÜR ÜBERSETZUNGEN
+import { useMode } from "@/context/ModeContext";
 import { Reveal } from "@/components/Reveal";
 import ContactForm from "@/components/ContactForm";
 import ServiceAccordion from "@/components/ServiceAccordion";
@@ -10,7 +10,7 @@ import TechStack from "@/components/TechStack";
 import BlogSection from "@/components/BlogSection";
 import { motion } from "framer-motion";
 
-// Layout-Daten für die Silo Traps (Positionierung bleibt technisch, Text kommt aus 't')
+// Layout-Daten für die Silo Traps
 const trapLayouts = [
   { left: '11rem' },
   { left: '16rem' },
@@ -31,10 +31,7 @@ const SiloTrapItem = ({ text, quote, left }: { text: string; quote: string; left
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
         >
-            {/* Hauptstatement */}
             <span className={`${primaryColor} font-mono text-xl mr-4 z-10 transition-colors relative`}>{text}</span>
-
-            {/* Zitat: Animation von unten */}
             <motion.span
                 className={`font-serif italic text-2xl absolute z-0 whitespace-nowrap tracking-wide pointer-events-none ${quoteColor}`}
                 style={{ left: left, top: '1.2rem' }}
@@ -52,7 +49,6 @@ const SiloTrapItem = ({ text, quote, left }: { text: string; quote: string; left
 };
 
 export default function Home() {
-  // Wir holen uns den Modus UND das Wörterbuch 't'
   const { isCodeMode, t } = useMode();
 
   return (
@@ -147,7 +143,6 @@ export default function Home() {
               {t.challenge.subtitle}
             </p>
 
-            {/* TRAPS MIT HOVER ANIMATION (Daten kommen aus t, Layout aus trapLayouts) */}
             <ul className="space-y-12 font-mono text-xl">
               {t.challenge.traps.map((trap, i) => (
                 <SiloTrapItem
@@ -186,7 +181,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 4. THE SOLUTION (VENN DIAGRAM) */}
+      {/* 4. THE SOLUTION */}
       <section id="solution" className="py-24 px-6 bg-white dark:bg-slate-900 overflow-hidden border-b-2 border-black dark:border-green-500/30 transition-colors duration-500">
         <div className="max-w-4xl mx-auto text-center mb-16">
           <h2 className="font-serif dark:font-mono text-4xl italic dark:not-italic mb-4">{t.solution.title}</h2>
@@ -194,35 +189,19 @@ export default function Home() {
         </div>
 
         <div className="venn-container scale-75 md:scale-100 dark:opacity-90">
-          {/* ÄUSSERE KREISE (STATISCH) */}
           <div className="venn-circle venn-law dark:border-green-500 dark:text-green-400 dark:bg-slate-900/50">LAW</div>
           <div className="venn-circle venn-tech dark:border-green-500 dark:text-green-400 dark:bg-slate-900/50">TECH</div>
           <div className="venn-circle venn-biz dark:border-green-500 dark:text-green-400 dark:bg-slate-900/50">BUSINESS</div>
 
-          {/* ZENTRUM: LOGO (Pulsierend) */}
           <div className="venn-me dark:bg-green-600 dark:shadow-[0_0_30px_rgba(34,197,94,0.4)]">
-
-            {/* Pulsierender Hintergrund-Effekt */}
+            {/* FIX: Nur EIN ClassName Attribut, keine doppelten Style-Zuweisungen */}
             <motion.div
-                className="absolute inset-0 rounded-full"
                 initial={{ scale: 1 }}
                 animate={{ scale: [1, 1.3, 1] }}
-                transition={{
-                    duration: 3,
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                }}
-                // Transparenter Rand für den "atmenden" Effekt
-                style={{
-                    backgroundColor: 'rgba(0, 47, 167, 0.1)', // Soft IKB Blau
-                    boxShadow: '0 0 10px rgba(0, 47, 167, 0.4)',
-                    opacity: 0.8
-                }}
-                // Dark Mode Anpassung
-                className={`absolute inset-0 rounded-full ${isCodeMode ? 'bg-green-500/10 shadow-[0_0_10px_rgba(34,197,94,0.4)]' : 'bg-ikb/10 shadow-[0_0_10px_rgba(0,47,167,0.4)]'}`}
+                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                // Wir nutzen hier Tailwind-Klassen für alles, inkl. Opacity (bg-opacity)
+                className={`absolute inset-0 rounded-full opacity-80 ${isCodeMode ? 'bg-green-500/10 shadow-[0_0_10px_rgba(34,197,94,0.4)]' : 'bg-ikb/10 shadow-[0_0_10px_rgba(0,47,167,0.4)]'}`}
             />
-
-            {/* Logo SVG */}
              <svg viewBox="0 0 100 100" className='w-12 h-12 relative z-10'>
                 <text x="50" y="48" style={{fontFamily: 'IBM Plex Mono, monospace'}} fontWeight="700" fontSize="38" textAnchor="middle" fill="white" dominantBaseline="central">DK</text>
                 <path d="M28 22 C 18 22, 18 22, 18 35 L 18 42 C 18 48, 12 50, 12 50 C 12 50, 18 52, 18 58 L 18 65 C 18 78, 18 78, 28 78" fill="none" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" stroke="white"/>
