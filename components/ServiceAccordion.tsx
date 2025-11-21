@@ -1,13 +1,17 @@
 'use client';
-import { useState } from 'react';
 import { useMode } from '@/context/ModeContext';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export default function ServiceAccordion() {
-  const [openId, setOpenId] = useState<number | null>(null);
-  const { isCodeMode, t } = useMode(); // Wir holen das Wörterbuch und den Modus
+// Interface für die Props (Daten kommen von der Parent-Component)
+interface Props {
+  openId: number | null;
+  setOpenId: (id: number | null) => void;
+}
 
-  // Wir holen die Texte aus dem Context
+export default function ServiceAccordion({ openId, setOpenId }: Props) {
+  const { isCodeMode, t } = useMode();
+
+  // Wir holen die Texte dynamisch aus dem Wörterbuch
   const serviceData = t.services.items;
 
   // Farben definieren
@@ -19,27 +23,27 @@ export default function ServiceAccordion() {
     ? "hover:bg-green-500/20 dark:hover:bg-green-900/40"
     : "hover:bg-ikb/90";
 
-  // Berechnung der Breite für das horizontale Accordion
+  // Logik für die Breite: Wenn einer offen ist 70%, sonst alle gleich
   const getWidth = (id: number) => {
     if (openId === null) return '33.33%';
     return id === openId ? '70%' : '15%';
   };
 
-  // Statische Untertitel
+  // Statische Untertitel für die Boxen
   const subtitles = ["AUDIT", "ARCHITECTURE", "WORKSHOP"];
 
   return (
     <div className="flex w-full divide-x-2 divide-black dark:divide-green-500/30 overflow-hidden min-h-[500px] border-y-2 border-black dark:border-green-500/30">
       {serviceData.map((item, index) => {
-        // Wir nutzen den Index (0, 1, 2) um eine ID zu simulieren (1, 2, 3)
+        // ID simulieren (1-basiert)
         const id = index + 1;
         const isOpen = id === openId;
         const toggleHandler = () => setOpenId(isOpen ? null : id);
 
-        // Das mittlere Element (Index 1) ist unser "Core" Service (Legal Engineering)
+        // Index 1 (der zweite Eintrag) ist "Legal Engineering" (Core)
         const isCore = index === 1;
 
-        // Styling Logik: Hintergrundfarbe nur für Core
+        // Styling: Nur Core bekommt Farbe, andere bleiben neutral
         const itemBgClass = isCore
             ? primaryColorClass
             : "bg-white dark:bg-slate-900";
@@ -47,7 +51,7 @@ export default function ServiceAccordion() {
         const currentHoverClass = isCore ? hoverColorClass : "";
         const width = getWidth(id);
 
-        // Mapping der Punkte
+        // Detail-Sektionen mappen
         const sections = [
             { title: item.pointsTitle1, points: item.points1 },
             { title: item.pointsTitle2, points: item.points2 }
@@ -77,7 +81,7 @@ export default function ServiceAccordion() {
               </motion.div>
             </div>
 
-            {/* Titel */}
+            {/* Titel - nowrap verhindert Umbruch bei schmaler Box */}
             <h3 className={`font-serif dark:font-mono text-3xl mb-4 whitespace-nowrap ${isCore ? "text-white italic dark:not-italic" : "text-black dark:text-gray-100 italic dark:not-italic"} z-10`}>
                 {item.title}
             </h3>

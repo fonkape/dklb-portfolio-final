@@ -5,8 +5,8 @@ import { useMode } from '@/context/ModeContext';
 export default function BlueprintSystem({ activeId }: { activeId: number | null }) {
   const { isCodeMode } = useMode();
 
-  // Farben
-  const inactiveColor = isCodeMode ? "#1e293b" : "#e2e8f0"; // Slate-800 / Gray-200
+  // Farben definieren (Legal: IKB Blau / Code: Hacker Grün)
+  const inactiveColor = isCodeMode ? "#1e293b" : "#e2e8f0"; // Dunkelgrau / Hellgrau
   const activeColor = isCodeMode ? "#22c55e" : "#002FA7";   // Grün / IKB
   const glowColor = isCodeMode ? "rgba(34, 197, 94, 0.5)" : "rgba(0, 47, 167, 0.3)";
 
@@ -91,12 +91,11 @@ export default function BlueprintSystem({ activeId }: { activeId: number | null 
         </motion.g>
 
         {/* Verbindungslinien (Statisch, immer sichtbar aber dezent) */}
-        <path d="M400 320 L 400 320" stroke={inactiveColor} strokeWidth="1" opacity="0.3"/>
         <line x1="400" y1="320" x2="400" y2="180" stroke={inactiveColor} strokeWidth="1" strokeDasharray="4 4" opacity="0.5"/>
 
       </svg>
 
-      {/* Label (Optional: Zeigt an, was gerade aktiv ist) */}
+      {/* Status Label unten */}
       <div className="absolute bottom-4 left-0 right-0 text-center font-mono text-xs text-gray-400 uppercase tracking-widest">
         {activeId === 1 && "SYSTEM STATUS: AUDITING FOUNDATION"}
         {activeId === 2 && "SYSTEM STATUS: BUILDING ARCHITECTURE"}
