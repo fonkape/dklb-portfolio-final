@@ -5,16 +5,13 @@ import { useMode } from '@/context/ModeContext';
 export default function BlueprintSystem({ activeId }: { activeId: number | null }) {
   const { isCodeMode } = useMode();
 
-  // Farb-Logik: "Legal" = IKB Blau, "Code" = Matrix Grün
-  // Wir definieren hier HEX und RGBA für Effekte
   const c = {
-    base: isCodeMode ? "#1e293b" : "#cbd5e1",     // Inaktives Grau
-    active: isCodeMode ? "#22c55e" : "#002FA7",   // Hauptfarbe
-    glow: isCodeMode ? "rgba(34, 197, 94, 0.6)" : "rgba(0, 47, 167, 0.5)", // Leuchten
-    scan: isCodeMode ? "rgba(34, 197, 94, 0.1)" : "rgba(0, 47, 167, 0.1)"  // Scanner Fläche
+    base: isCodeMode ? "#1e293b" : "#cbd5e1",
+    active: isCodeMode ? "#22c55e" : "#002FA7",
+    glow: isCodeMode ? "rgba(34, 197, 94, 0.6)" : "rgba(0, 47, 167, 0.5)",
+    scan: isCodeMode ? "rgba(34, 197, 94, 0.1)" : "rgba(0, 47, 167, 0.1)"
   };
 
-  // Animations-Varianten
   const draw = {
     hidden: { pathLength: 0, opacity: 0 },
     visible: {
@@ -36,7 +33,6 @@ export default function BlueprintSystem({ activeId }: { activeId: number | null 
   return (
     <div className="w-full h-72 md:h-96 flex justify-center items-center mb-12 relative overflow-hidden border border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-slate-900/50 rounded-xl backdrop-blur-sm">
 
-      {/* HINTERGRUND: Bewegtes Gitter (Parallax Illusion) */}
       <div className="absolute inset-0 pointer-events-none opacity-20 overflow-hidden">
         <motion.div
             animate={{ backgroundPosition: ["0px 0px", "20px 20px"] }}
@@ -57,15 +53,12 @@ export default function BlueprintSystem({ activeId }: { activeId: number | null 
             animate={activeId === 3 ? "visible" : "hidden"}
             style={{ opacity: activeId === 3 || activeId === null ? 1 : 0.3 }}
         >
-            {/* Linker Node (Legal) */}
             <circle cx="280" cy="100" r="30" stroke={activeId === 3 ? c.active : c.base} strokeWidth="2"/>
             <text x="280" y="105" textAnchor="middle" fill={activeId === 3 ? c.active : c.base} fontSize="10" fontFamily="monospace">LAW</text>
 
-            {/* Rechter Node (Tech) */}
             <circle cx="520" cy="100" r="30" stroke={activeId === 3 ? c.active : c.base} strokeWidth="2"/>
             <text x="520" y="105" textAnchor="middle" fill={activeId === 3 ? c.active : c.base} fontSize="10" fontFamily="monospace">CODE</text>
 
-            {/* Die Datenleitung (Pulsierend wenn aktiv) */}
             <motion.path
                 d="M310 100 L 490 100"
                 stroke={activeId === 3 ? c.active : c.base}
@@ -75,15 +68,15 @@ export default function BlueprintSystem({ activeId }: { activeId: number | null 
                 transition={{ duration: 0.5, repeat: Infinity, ease: "linear" }}
             />
 
-            {/* "Pakete" die über die Leitung flitzen (Nur wenn aktiv) */}
+            {/* FIX: Standard SVG animateMotion statt Framer Motion Komponente für diesen speziellen Fall */}
             {activeId === 3 && (
                 <>
-                    <motion.circle r="4" fill={c.active} filter={`drop-shadow(0 0 8px ${c.active})`}>
-                        <motion.animateMotion path="M310 100 L 490 100" dur="1.5s" repeatCount="indefinite" />
-                    </motion.circle>
-                    <motion.circle r="4" fill={c.active} filter={`drop-shadow(0 0 8px ${c.active})`}>
-                        <motion.animateMotion path="M490 100 L 310 100" dur="1.5s" repeatCount="indefinite" begin="0.75s" />
-                    </motion.circle>
+                    <circle r="4" fill={c.active} filter={`drop-shadow(0 0 8px ${c.active})`}>
+                        <animateMotion path="M310 100 L 490 100" dur="1.5s" repeatCount="indefinite" />
+                    </circle>
+                    <circle r="4" fill={c.active} filter={`drop-shadow(0 0 8px ${c.active})`}>
+                        <animateMotion path="M490 100 L 310 100" dur="1.5s" repeatCount="indefinite" begin="0.75s" />
+                    </circle>
                 </>
             )}
         </motion.g>
@@ -95,19 +88,15 @@ export default function BlueprintSystem({ activeId }: { activeId: number | null 
             animate={activeId === 2 ? "visible" : "hidden"}
             style={{ opacity: activeId === 2 || activeId === null ? 1 : 0.3 }}
         >
-            {/* Blaupause zeichnet sich selbst */}
             <motion.rect variants={draw} x="350" y="160" width="100" height="120" stroke={activeId === 2 ? c.active : c.base} strokeWidth="2" rx="4" />
 
-            {/* Innere Struktur (Code Zeilen) */}
             <motion.line variants={draw} x1="360" y1="180" x2="400" y2="180" stroke={activeId === 2 ? c.active : c.base} strokeWidth="2" />
             <motion.line variants={draw} x1="360" y1="200" x2="420" y2="200" stroke={activeId === 2 ? c.active : c.base} strokeWidth="2" />
             <motion.line variants={draw} x1="360" y1="220" x2="390" y2="220" stroke={activeId === 2 ? c.active : c.base} strokeWidth="2" />
 
-            {/* Connection Nodes (Pulsierend) */}
             <motion.circle cx="350" cy="200" r="4" fill={activeId === 2 ? c.active : c.base} animate={activeId === 2 ? pulse : {}} />
             <motion.circle cx="450" cy="240" r="4" fill={activeId === 2 ? c.active : c.base} animate={activeId === 2 ? pulse : {}} />
 
-            {/* Floating "Compliance" Badge */}
             {activeId === 2 && (
                 <motion.g
                     initial={{ opacity: 0, x: -20 }}
@@ -128,15 +117,12 @@ export default function BlueprintSystem({ activeId }: { activeId: number | null 
             animate={activeId === 1 ? "visible" : "hidden"}
             style={{ opacity: activeId === 1 || activeId === null ? 1 : 0.3 }}
         >
-            {/* Basis Plattform */}
             <motion.path variants={draw} d="M200 340 L 600 340 L 580 380 L 220 380 Z" stroke={activeId === 1 ? c.active : c.base} strokeWidth="2" />
 
-            {/* Raster auf der Plattform */}
             <path d="M300 340 L 310 380" stroke={activeId === 1 ? c.active : c.base} strokeWidth="1" opacity="0.5"/>
             <path d="M400 340 L 400 380" stroke={activeId === 1 ? c.active : c.base} strokeWidth="1" opacity="0.5"/>
             <path d="M500 340 L 490 380" stroke={activeId === 1 ? c.active : c.base} strokeWidth="1" opacity="0.5"/>
 
-            {/* Der Scanner-Laser (Bewegt sich hin und her) */}
             {activeId === 1 && (
                 <>
                     <motion.rect
@@ -157,7 +143,6 @@ export default function BlueprintSystem({ activeId }: { activeId: number | null 
                 </>
             )}
 
-            {/* Definition für den Scanner-Verlauf */}
             <defs>
                 <linearGradient id="scanGradient" x1="0" y1="0" x2="1" y2="0">
                     <stop offset="0%" stopColor={c.active} stopOpacity="0" />
@@ -166,13 +151,11 @@ export default function BlueprintSystem({ activeId }: { activeId: number | null 
             </defs>
         </motion.g>
 
-        {/* VERBINDUNGSLINIEN (Vertical Backbone) */}
         <motion.line x1="400" y1="340" x2="400" y2="280" stroke={c.base} strokeWidth="1" strokeDasharray="2 2" />
         <motion.line x1="400" y1="160" x2="400" y2="100" stroke={c.base} strokeWidth="1" strokeDasharray="2 2" />
 
       </svg>
 
-      {/* STATUS DISPLAY (Wie ein HUD) */}
       <div className="absolute bottom-4 left-4 font-mono text-[10px] text-gray-400 flex flex-col gap-1">
          <div className="flex items-center gap-2">
             <div className={`w-2 h-2 rounded-full ${activeId !== null ? 'bg-green-500 animate-pulse' : 'bg-gray-400'}`}></div>
